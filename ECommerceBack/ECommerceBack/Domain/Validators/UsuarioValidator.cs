@@ -1,7 +1,7 @@
 ﻿using ECommerceBack.Domain.Entities;
 using FluentValidation;
 
-namespace ECommerceBack.Common.Validators;
+namespace ECommerceBack.Domain.Validators;
 
 public class UsuarioValidator : AbstractValidator<Usuario>
 {
