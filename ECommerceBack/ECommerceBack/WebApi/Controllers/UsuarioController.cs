@@ -17,9 +17,16 @@ public class UsuarioController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ResponseDto> CadastrarUsuarioAsync([FromBody] CadastroUsuarioDto cadastroUsuario)
+    public async Task<RespostaApiDto> CadastrarUsuarioAsync([FromBody] CadastroUsuarioDto cadastroUsuario)
     {
         await _usuarioService.CadastrarUsuarioAsync(cadastroUsuario);
-        return new ResponseDto("Usuário cadastrado com sucesso.");
+        return new RespostaApiDto("Usuário cadastrado com sucesso.");
+    }
+
+    [HttpPost("login")]
+    public async Task<RespostaApiDto<TokenDto?>> LoginAsync([FromBody] CredenciaisLoginDto credenciais)
+    {
+        TokenDto? token = await _usuarioService.LoginAsync(credenciais);
+        return new RespostaApiDto<TokenDto?>(token);
     }
 }

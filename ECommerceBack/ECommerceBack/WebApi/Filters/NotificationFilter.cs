@@ -20,7 +20,7 @@ public class NotificationFilter : IAsyncResultFilter
         {
             context.HttpContext.Response.StatusCode = StatusCodes.Status400BadRequest;
             context.HttpContext.Response.ContentType = MediaTypeNames.Application.Json;
-            await context.HttpContext.Response.WriteAsJsonAsync(new ResponseDto(_notificationContext.Notificacoes));
+            await context.HttpContext.Response.WriteAsJsonAsync(new RespostaApiDto(_notificationContext.Notificacoes));
             return;
         }
 
