@@ -2,6 +2,9 @@
 
 namespace ECommerceBack.Infra.Database;
 
+/// <summary>
+/// Classe responsável por popular o banco de dados com alguns dados prévios.
+/// </summary>
 public class InicializadorBanco
 {
     private readonly ECommerceDbContext _context;
@@ -11,6 +14,9 @@ public class InicializadorBanco
         _context = context;
     }
 
+    /// <summary>
+    /// Método para popular o banco de dados. Somente irá popular caso a tabela "itens" esteja vazia.
+    /// </summary>
     public void PopularBanco()
     {
         if (_context.Itens.Any())
