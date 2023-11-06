@@ -3,7 +3,7 @@ using FluentValidation;
 
 namespace ECommerceBack.Domain.Entities;
 
-public class Usuario : Entity<Usuario>
+public class Usuario : EntityValidavel<Usuario>
 {
     public string Email { get; set; }
     public string Senha { get; set; }

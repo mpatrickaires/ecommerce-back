@@ -1,12 +1,12 @@
 ﻿using ECommerceBack.Domain.Entities;
 using ECommerceBack.Domain.Repositories;
-using ECommerceBack.Infra.Context;
+using ECommerceBack.Infra.Database;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 
 namespace ECommerceBack.Infra.Repositories;
 
-public class RepositoryBase<TEntity> : IRepository<TEntity> where TEntity : Entity<TEntity>
+public class RepositoryBase<TEntity> : IRepository<TEntity> where TEntity : Entity
 {
     protected readonly ECommerceDbContext Context;
     protected DbSet<TEntity> DbSet => Context.Set<TEntity>();

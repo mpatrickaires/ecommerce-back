@@ -9,18 +9,21 @@ public class UsuarioValidator : AbstractValidator<Usuario>
     {
         RuleFor(u => u.Email)
             .NotEmpty()
-            .WithMessage("O e-mail é obrigatório.");
+            .WithName("E-mail")
+            .WithMessage(MensagemValidacao.CampoObrigatorio);
 
         RuleFor(u => u.Email)
             .EmailAddress()
-            .WithMessage("Email inválido.");
+            .WithMessage("E-mail inválido.");
 
         RuleFor(u => u.Senha)
             .NotEmpty()
-            .WithMessage("A senha é obrigatória.");
+            .WithName("Senha")
+            .WithMessage(MensagemValidacao.CampoObrigatorio);
 
         RuleFor(u => u.Nome)
             .NotEmpty()
-            .WithMessage("O nome é obrigatório.");
+            .WithName("Nome")
+            .WithMessage(MensagemValidacao.CampoObrigatorio);
     }
 }

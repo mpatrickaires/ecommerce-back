@@ -1,6 +1,6 @@
 ﻿using ECommerceBack.Domain.Entities;
 using ECommerceBack.Domain.Repositories;
-using ECommerceBack.Infra.Context;
+using ECommerceBack.Infra.Database;
 
 namespace ECommerceBack.Infra.Repositories;
 

@@ -3,7 +3,7 @@ using ECommerceBack.Common;
 using ECommerceBack.Common.Exceptions;
 using ECommerceBack.Common.Extensions;
 using ECommerceBack.Common.Options;
-using ECommerceBack.Infra.Context;
+using ECommerceBack.Infra.Database;
 using ECommerceBack.Infra.Options;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
@@ -13,6 +13,9 @@ using System.Text;
 
 namespace ECommerceBack;
 
+/// <summary>
+/// Define os métodos que realizam todas as configurações necessárias para a execução da aplicação
+/// </summary>
 public static class Bootstrapper
 {
     public static WebApplicationBuilder ConfigurarAplicacao(this WebApplicationBuilder builder) => builder
@@ -30,7 +33,8 @@ public static class Bootstrapper
                 .AddClasses(classes => classes.Where(type => type.Name.EndsWithAny("Repository", "Service")))
                 .AsImplementedInterfaces()
                 .WithScopedLifetime())
-            .AddScoped<NotificationContext>();
+            .AddScoped<NotificationContext>()
+            .AddScoped<InicializadorBanco>();
 
         return builder;
     }
@@ -91,7 +95,8 @@ public static class Bootstrapper
         {
             scope.ServiceProvider
                 .ValidarAutoMapper()
-                .AplicarMigrations();
+                .AplicarMigrations()
+                .PopularBanco();
         }
 
         return app;
@@ -107,6 +112,13 @@ public static class Bootstrapper
     private static IServiceProvider AplicarMigrations(this IServiceProvider serviceProvider)
     {
         serviceProvider.GetRequiredService<ECommerceDbContext>().Database.Migrate();
+
+        return serviceProvider;
+    }
+
+    private static IServiceProvider PopularBanco(this IServiceProvider serviceProvider)
+    {
+        serviceProvider.GetRequiredService<InicializadorBanco>().PopularBanco();
 
         return serviceProvider;
     }
