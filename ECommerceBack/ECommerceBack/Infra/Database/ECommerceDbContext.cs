@@ -1,5 +1,6 @@
 ﻿using ECommerceBack.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
+using System.Reflection;
 
 namespace ECommerceBack.Infra.Database;
 
@@ -16,6 +17,9 @@ public class ECommerceDbContext : DbContext
         {
             relacao.DeleteBehavior = DeleteBehavior.Restrict;
         }
+
+        // Aplicando as configurações de todas as classes que implementam a interface IEntityTypeConfiguration no assembly em execução.
+        modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
 
         base.OnModelCreating(modelBuilder);
     }

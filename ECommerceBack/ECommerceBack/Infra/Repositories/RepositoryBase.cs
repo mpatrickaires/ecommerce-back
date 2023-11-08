@@ -16,14 +16,23 @@ public class RepositoryBase<TEntity> : IRepository<TEntity> where TEntity : Enti
         Context = context;
     }
 
+    public async Task<IEnumerable<TEntity>> BuscarTodosAsync(params Expression<Func<TEntity, object>>[] relacionamentos)
+    {
+        var query = DbSet.AsQueryable();
+        AplicarRelacionamentos(ref query, relacionamentos);
+        return await query.ToListAsync();
+    }
+
     public virtual Task<TEntity?> BuscarPorExpressaoAsync(Expression<Func<TEntity, bool>> expressao)
     {
         return DbSet.FirstOrDefaultAsync(expressao);
     }
 
-    public virtual Task<TEntity?> BuscarPorIdAsync(int id)
+    public virtual Task<TEntity?> BuscarPorIdAsync(int id, params Expression<Func<TEntity, object>>[] relacionamentos)
     {
-        return DbSet.FirstOrDefaultAsync(e => e.Id == id);
+        var query = DbSet.AsQueryable();
+        AplicarRelacionamentos(ref query, relacionamentos);
+        return query.FirstOrDefaultAsync(e => e.Id == id);
     }
 
     public virtual void Inserir(TEntity entity)
@@ -34,5 +43,13 @@ public class RepositoryBase<TEntity> : IRepository<TEntity> where TEntity : Enti
     public virtual async Task SalvarAsync()
     {
         await Context.SaveChangesAsync();
+    }
+
+    private void AplicarRelacionamentos(ref IQueryable<TEntity> query, params Expression<Func<TEntity, object>>[] relacionamentos)
+    {
+        foreach (var relacionamento in relacionamentos)
+        {
+            query = query.Include(relacionamento);
+        }
     }
 }
