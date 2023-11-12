@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ECommerceBack.Domain.Entities;
 
@@ -12,4 +13,6 @@ public class Item : Entity
     public int CorId { get; set; }
     public Cor Cor { get; set; }
     public int QuantidadeEstoque { get; set; }
+    [NotMapped]
+    public bool EstaDisponivel => QuantidadeEstoque > 0;
 }

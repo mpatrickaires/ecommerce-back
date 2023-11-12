@@ -1,10 +1,12 @@
 ﻿using AutoMapper;
+using ECommerceBack.Application.Authentication;
 using ECommerceBack.Common;
 using ECommerceBack.Common.Exceptions;
 using ECommerceBack.Common.Extensions;
 using ECommerceBack.Common.Options;
 using ECommerceBack.Infra.Database;
 using ECommerceBack.Infra.Options;
+using ECommerceBack.WebApi.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -33,8 +35,10 @@ public static class Bootstrapper
                 .AddClasses(classes => classes.Where(type => type.Name.EndsWithAny("Repository", "Service")))
                 .AsImplementedInterfaces()
                 .WithScopedLifetime())
+            .AddHttpContextAccessor()
             .AddScoped<NotificationContext>()
-            .AddScoped<InicializadorBanco>();
+            .AddScoped<InicializadorBanco>()
+            .AddScoped<IUsuarioLogado, UsuarioLogado>();
 
         return builder;
     }

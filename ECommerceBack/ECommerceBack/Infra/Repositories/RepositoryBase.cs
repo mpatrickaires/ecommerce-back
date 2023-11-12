@@ -40,6 +40,11 @@ public class RepositoryBase<TEntity> : IRepository<TEntity> where TEntity : Enti
         DbSet.Add(entity);
     }
 
+    public virtual void Deletar(TEntity entity)
+    {
+        DbSet.Remove(entity);
+    }
+
     public virtual async Task SalvarAsync()
     {
         await Context.SaveChangesAsync();
