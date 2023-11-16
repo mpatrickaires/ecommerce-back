@@ -1,6 +1,8 @@
-﻿using ECommerceBack.Application.Authentication;
+﻿using AutoMapper;
+using ECommerceBack.Application.Authentication;
+using ECommerceBack.Application.Dtos;
 using ECommerceBack.Application.Services.Interfaces;
-using ECommerceBack.Common;
+using ECommerceBack.Common.Notification;
 using ECommerceBack.Domain.Entities;
 using ECommerceBack.Domain.Repositories;
 
@@ -13,15 +15,17 @@ public class CarrinhoService : ICarrinhoService
     private readonly IItemRepository _itemRepository;
     private readonly IUsuarioLogado _usuarioLogado;
     private readonly NotificationContext _notificationContext;
+    private readonly IMapper _mapper;
 
-    public CarrinhoService(ICarrinhoRepository carrinhoRepository, IUsuarioRepository usuarioRepository, IItemRepository itemRepository, 
-        IUsuarioLogado usuarioLogado, NotificationContext notificationContext)
+    public CarrinhoService(ICarrinhoRepository carrinhoRepository, IUsuarioRepository usuarioRepository, IItemRepository itemRepository,
+        IUsuarioLogado usuarioLogado, NotificationContext notificationContext, IMapper mapper)
     {
         _carrinhoRepository = carrinhoRepository;
         _usuarioRepository = usuarioRepository;
         _itemRepository = itemRepository;
         _usuarioLogado = usuarioLogado;
         _notificationContext = notificationContext;
+        _mapper = mapper;
     }
 
     public async Task AdicionarItemAoCarrinhoAsync(int itemId, int quantidade = 1)
@@ -29,24 +33,19 @@ public class CarrinhoService : ICarrinhoService
         Usuario? usuario = await _usuarioRepository.BuscarPorIdAsync(_usuarioLogado.Id);
         if (usuario == null)
         {
-            _notificationContext.AdicionarNotificacao("Usuário não encontrado.");
+            _notificationContext.AdicionarNotificacao(NotificationMessages.UsuarioNaoEncontrado);
             return;
         }
 
         Item? item = await _itemRepository.BuscarPorIdAsync(itemId);
         if (item == null)
         {
-            _notificationContext.AdicionarNotificacao("Item não encontrado.");
+            _notificationContext.AdicionarNotificacao(NotificationMessages.ItemNaoEncontrado);
             return;
         }
-        if (!item.EstaDisponivel)
+        if (!item.EstaValidoParaAdicionarAoCarrinho(quantidade, out string razaoInvalido))
         {
-            _notificationContext.AdicionarNotificacao("Esse item não está disponível.");
-            return;
-        }
-        if (item.QuantidadeEstoque < quantidade)
-        {
-            _notificationContext.AdicionarNotificacao($"Quantidade insuficiente do item em estoque. Quantidade máxima: {item.QuantidadeEstoque}.");
+            _notificationContext.AdicionarNotificacao(razaoInvalido);
             return;
         }
 
@@ -77,14 +76,14 @@ public class CarrinhoService : ICarrinhoService
         Usuario? usuario = await _usuarioRepository.BuscarPorIdAsync(_usuarioLogado.Id);
         if (usuario == null)
         {
-            _notificationContext.AdicionarNotificacao("Usuário não encontrado.");
+            _notificationContext.AdicionarNotificacao(NotificationMessages.UsuarioNaoEncontrado);
             return;
         }
 
         Item? item = await _itemRepository.BuscarPorIdAsync(itemId);
         if (item == null)
         {
-            _notificationContext.AdicionarNotificacao("Item não encontrado.");
+            _notificationContext.AdicionarNotificacao(NotificationMessages.ItemNaoEncontrado);
             return;
         }
 
@@ -95,16 +94,11 @@ public class CarrinhoService : ICarrinhoService
             return;
         }
 
-        if (!item.EstaDisponivel)
+        if (!item.EstaValidoParaAdicionarAoCarrinho(quantidade, out string razaoInvalido))
         {
-            _notificationContext.AdicionarNotificacao("Esse item não está disponível.");
+            _notificationContext.AdicionarNotificacao(razaoInvalido);
             return;
-        }
-        if (item.QuantidadeEstoque < quantidade)
-        {
-            _notificationContext.AdicionarNotificacao($"Quantidade insuficiente do item em estoque. Quantidade máxima: {item.QuantidadeEstoque}.");
-            return;
-        }
+                }
 
         if (quantidade == 0)
         {
@@ -118,4 +112,37 @@ public class CarrinhoService : ICarrinhoService
     }
 
     public Task RemoverItemDoCarrinhoAsync(int itemId) => AlterarQuantidadeItemNoCarrinhoAsync(itemId, 0);
+
+    public async Task<CarrinhoDetalhesDto?> ObterDetalhesCarrinhoAsync()
+    {
+        Usuario? usuario = await _usuarioRepository.BuscarPorIdAsync(_usuarioLogado.Id);
+        if (usuario == null)
+        {
+            _notificationContext.AdicionarNotificacao(NotificationMessages.UsuarioNaoEncontrado);
+            return null;
+        }
+
+        IEnumerable<CarrinhoItem> carrinhoItems = await _carrinhoRepository
+            .BuscarTodosPorExpressaoAsync(c => c.UsuarioId == _usuarioLogado.Id);
+
+        return new CarrinhoDetalhesDto
+        {
+            Itens = _mapper.Map<IEnumerable<CarrinhoDetalhesItemDto>>(carrinhoItems)
+        };
+    }
+
+    public async Task<int?> ObterQuantidadeItensCarrinhoAsync()
+    {
+        Usuario? usuario = await _usuarioRepository.BuscarPorIdAsync(_usuarioLogado.Id);
+        if (usuario == null)
+        {
+            _notificationContext.AdicionarNotificacao(NotificationMessages.UsuarioNaoEncontrado);
+            return null;
+        }
+
+        IEnumerable<CarrinhoItem> carrinhoItems = await _carrinhoRepository
+            .BuscarTodosPorExpressaoAsync(c => c.UsuarioId == _usuarioLogado.Id);
+
+        return carrinhoItems.Sum(c => c.QuantidadeItem);
+    }
 }

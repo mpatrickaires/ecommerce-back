@@ -1,4 +1,4 @@
-﻿using ECommerceBack.Common;
+﻿using ECommerceBack.Common.Notification;
 using ECommerceBack.WebApi.Dtos;
 using Microsoft.AspNetCore.Mvc.Filters;
 using System.Net.Mime;

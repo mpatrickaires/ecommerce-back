@@ -15,4 +15,21 @@ public class Item : Entity
     public int QuantidadeEstoque { get; set; }
     [NotMapped]
     public bool EstaDisponivel => QuantidadeEstoque > 0;
+
+    public bool EstaValidoParaAdicionarAoCarrinho(int quantidadeAdicionar, out string razaoInvalido)
+    {
+        if (!EstaDisponivel)
+        {
+            razaoInvalido = "Esse item não está disponível.";
+            return false;
+        }
+        if (QuantidadeEstoque < quantidadeAdicionar)
+        {
+            razaoInvalido = $"Quantidade insuficiente do item em estoque. Quantidade máxima: {QuantidadeEstoque}.";
+            return false;
+        }
+
+        razaoInvalido = "";
+        return true;
+    }
 }

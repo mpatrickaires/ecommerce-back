@@ -28,6 +28,14 @@ public class RepositoryBase<TEntity> : IRepository<TEntity> where TEntity : Enti
         return DbSet.FirstOrDefaultAsync(expressao);
     }
 
+    public virtual async Task<IEnumerable<TEntity>> BuscarTodosPorExpressaoAsync(Expression<Func<TEntity, bool>> expressao, 
+        params Expression<Func<TEntity, object>>[] relacionamentos)
+    {
+        var query = DbSet.Where(expressao);
+        AplicarRelacionamentos(ref query, relacionamentos);
+        return await query.ToListAsync();
+    }
+
     public virtual Task<TEntity?> BuscarPorIdAsync(int id, params Expression<Func<TEntity, object>>[] relacionamentos)
     {
         var query = DbSet.AsQueryable();

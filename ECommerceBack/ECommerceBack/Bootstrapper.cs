@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
 using ECommerceBack.Application.Authentication;
-using ECommerceBack.Common;
 using ECommerceBack.Common.Exceptions;
 using ECommerceBack.Common.Extensions;
+using ECommerceBack.Common.Notification;
 using ECommerceBack.Common.Options;
 using ECommerceBack.Infra.Database;
 using ECommerceBack.Infra.Options;

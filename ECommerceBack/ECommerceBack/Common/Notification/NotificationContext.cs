@@ -1,6 +1,6 @@
 ﻿using FluentValidation.Results;
 
-namespace ECommerceBack.Common;
+namespace ECommerceBack.Common.Notification;
 
 public class NotificationContext
 {

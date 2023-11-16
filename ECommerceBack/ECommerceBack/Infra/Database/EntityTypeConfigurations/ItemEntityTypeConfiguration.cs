@@ -10,5 +10,6 @@ public class ItemEntityTypeConfiguration : IEntityTypeConfiguration<Item>
     {
         builder.Navigation(i => i.Tamanho).AutoInclude();
         builder.Navigation(i => i.Cor).AutoInclude();
+        builder.Navigation(i => i.Produto).AutoInclude();
     }
 }

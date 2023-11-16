@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using ECommerceBack.Application.Dtos;
 using ECommerceBack.Application.Services.Interfaces;
-using ECommerceBack.Common;
+using ECommerceBack.Common.Notification;
 using ECommerceBack.Common.Options;
 using ECommerceBack.Domain.Entities;
 using ECommerceBack.Domain.Repositories;
