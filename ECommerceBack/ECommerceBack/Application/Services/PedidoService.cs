@@ -1,4 +1,6 @@
-﻿using ECommerceBack.Application.Authentication;
+﻿using AutoMapper;
+using ECommerceBack.Application.Authentication;
+using ECommerceBack.Application.Dtos;
 using ECommerceBack.Application.Services.Interfaces;
 using ECommerceBack.Common.Notification;
 using ECommerceBack.Domain.Entities;
@@ -13,14 +15,16 @@ public class PedidoService : IPedidoService
     private readonly ICarrinhoRepository _carrinhoRepository;
     private readonly IUsuarioLogado _usuarioLogado;
     private readonly NotificationContext _notificationContext;
+    private readonly IMapper _mapper;
 
-    public PedidoService(IPedidoRepository pedidoRepository, IUsuarioRepository usuarioRepository, ICarrinhoRepository carrinhoRepository, IUsuarioLogado usuarioLogado, NotificationContext notificationContext)
+    public PedidoService(IPedidoRepository pedidoRepository, IUsuarioRepository usuarioRepository, ICarrinhoRepository carrinhoRepository, IUsuarioLogado usuarioLogado, NotificationContext notificationContext, IMapper mapper)
     {
         _pedidoRepository = pedidoRepository;
         _usuarioRepository = usuarioRepository;
         _carrinhoRepository = carrinhoRepository;
         _usuarioLogado = usuarioLogado;
         _notificationContext = notificationContext;
+        _mapper = mapper;
     }
 
     public async Task CriarPedidoAsync()
@@ -79,5 +83,19 @@ public class PedidoService : IPedidoService
         };
         _pedidoRepository.Inserir(pedido);
         await _pedidoRepository.SalvarAsync();
+    }
+
+    public async Task<IEnumerable<PedidoDto>> ObterPedidosAsync()
+    {
+        Usuario? usuario = await _usuarioRepository.BuscarPorIdAsync(_usuarioLogado.Id);
+        if (usuario == null)
+        {
+            _notificationContext.AdicionarNotificacao(NotificationMessages.UsuarioNaoEncontrado);
+            return Array.Empty<PedidoDto>();
+        }
+
+        IEnumerable<Pedido> pedidos = await _pedidoRepository.BuscarTodosPedidosUsuarioAsync(usuario.Id);
+
+        return _mapper.Map<IEnumerable<PedidoDto>>(pedidos);
     }
 }

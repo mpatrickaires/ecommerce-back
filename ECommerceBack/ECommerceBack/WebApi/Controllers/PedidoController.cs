@@ -1,4 +1,5 @@
-﻿using ECommerceBack.Application.Services.Interfaces;
+﻿using ECommerceBack.Application.Dtos;
+using ECommerceBack.Application.Services.Interfaces;
 using ECommerceBack.WebApi.Dtos;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -21,5 +22,11 @@ public class PedidoController : ControllerPrincipal
     {
         await _pedidoService.CriarPedidoAsync();
         return new RespostaApiDto("Pedido criado com sucesso.");
+    }
+
+    [HttpGet]
+    public async Task<RespostaApiDto<IEnumerable<PedidoDto>>> ObterPedidosAsync()
+    {
+        return new RespostaApiDto<IEnumerable<PedidoDto>>(await _pedidoService.ObterPedidosAsync());
     }
 }
