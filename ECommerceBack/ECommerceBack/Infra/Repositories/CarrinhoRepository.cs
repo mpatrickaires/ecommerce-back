@@ -12,4 +12,7 @@ public class CarrinhoRepository : RepositoryBase<CarrinhoItem>, ICarrinhoReposit
 
     public Task<CarrinhoItem?> BuscarCarrinhoItemAsync(int usuarioId, int itemId) => BuscarPorExpressaoAsync(c =>
         c.UsuarioId == usuarioId && c.ItemId == itemId);
+
+    public Task<IEnumerable<CarrinhoItem>> BuscarCarrinhoItensAsync(int usuarioId) => BuscarTodosPorExpressaoAsync(c =>
+        c.UsuarioId == usuarioId);
 }

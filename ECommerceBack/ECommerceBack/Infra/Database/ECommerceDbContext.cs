@@ -31,4 +31,6 @@ public class ECommerceDbContext : DbContext
     public DbSet<Tamanho> Tamanhos { get; set; }
     public DbSet<Item> Itens { get; set; }
     public DbSet<CarrinhoItem> CarrinhoItens { get; set; }
+    public DbSet<Pedido> Pedidos { get; set; }
+    public DbSet<PedidoItem> PedidoItens { get; set; }
 }
