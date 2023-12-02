@@ -43,25 +43,29 @@ public class CarrinhoService : ICarrinhoService
             _notificationContext.AdicionarNotificacao(NotificationMessages.ItemNaoEncontrado);
             return;
         }
-        if (!item.EstaValidoParaAdicionarAoCarrinho(quantidade, out string razaoInvalido))
+
+        CarrinhoItem? carrinhoItem = await _carrinhoRepository.BuscarCarrinhoItemAsync(_usuarioLogado.Id, itemId);
+
+        int quantidadeCarrinho = carrinhoItem != null ? carrinhoItem.QuantidadeItem + quantidade : quantidade;
+        if (!item.EstaValidoParaAdicionarAoCarrinho(quantidadeCarrinho, out string razaoInvalido))
         {
             _notificationContext.AdicionarNotificacao(razaoInvalido);
             return;
         }
 
-        CarrinhoItem? carrinhoItem = await _carrinhoRepository.BuscarCarrinhoItemAsync(_usuarioLogado.Id, itemId);
         if (carrinhoItem != null)
         {
-            _notificationContext.AdicionarNotificacao("Item já adicionado ao carrinho.");
-            return;
+            carrinhoItem.QuantidadeItem += quantidade;
         }
-
-        _carrinhoRepository.Inserir(new CarrinhoItem
+        else
         {
-            Usuario = usuario,
-            Item = item,
-            QuantidadeItem = quantidade,
-        });
+            _carrinhoRepository.Inserir(new CarrinhoItem
+            {
+                Usuario = usuario,
+                Item = item,
+                QuantidadeItem = quantidade,
+            });
+        }
         await _carrinhoRepository.SalvarAsync();
     }
 
