@@ -2,6 +2,7 @@
 
 public class PedidoItemDto
 {
+    public string Imagem { get; set; }
     public string Tamanho { get; set; }
     public string Cor { get; set; }
     public int QuantidadeItem { get; set; }
