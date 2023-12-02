@@ -8,6 +8,8 @@ public class EntityParaDto : Profile
 {
     public EntityParaDto()
     {
+        CreateMap<Cor, CorDto>();
+
         CreateMap<Produto, ProdutoVitrineDto>()
             .ForMember(dto => dto.Imagem, m => m.MapFrom(entity =>
                 entity.ImagensOrdenadas.First().UrlImagem));
@@ -35,16 +37,17 @@ public class EntityParaDto : Profile
 
         CreateMap<CarrinhoItem, CarrinhoDetalhesItemDto>()
             .ForMember(dto => dto.Id, m => m.MapFrom(entity => entity.Item.Id))
+            .ForMember(dto => dto.Imagem, m => m.MapFrom(entity => entity.Item.Produto.ImagemPrincipal.UrlImagem))
             .ForMember(dto => dto.Nome, m => m.MapFrom(entity => entity.Item.Produto.Nome))
             .ForMember(dto => dto.Tamanho, m => m.MapFrom(entity => entity.Item.Tamanho.Nome))
-            .ForMember(dto => dto.Cor, m => m.MapFrom(entity => entity.Item.Cor.Nome))
+            .ForMember(dto => dto.Cor, m => m.MapFrom(entity => entity.Item.Cor))
             .ForMember(dto => dto.Quantidade, m => m.MapFrom(entity => entity.QuantidadeItem))
             .ForMember(dto => dto.PrecoUnitario, m => m.MapFrom(entity => entity.Item.Produto.Preco));
 
         CreateMap<PedidoItem, PedidoItemDto>()
             .ForMember(dto => dto.Imagem, m => m.MapFrom(entity => entity.Item.Produto.ImagemPrincipal.UrlImagem))
             .ForMember(dto => dto.Tamanho, m => m.MapFrom(entity => entity.Item.Tamanho.Nome))
-            .ForMember(dto => dto.Cor, m => m.MapFrom(entity => entity.Item.Cor.Nome));
+            .ForMember(dto => dto.Cor, m => m.MapFrom(entity => entity.Item.Cor));
 
         CreateMap<Pedido, PedidoDto>();
     }
