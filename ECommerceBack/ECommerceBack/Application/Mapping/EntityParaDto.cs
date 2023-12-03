@@ -46,6 +46,8 @@ public class EntityParaDto : Profile
             .ForMember(dto => dto.PrecoUnitario, m => m.MapFrom(entity => entity.Item.Produto.Preco));
 
         CreateMap<PedidoItem, PedidoItemDto>()
+            .ForMember(dto => dto.Id, m => m.MapFrom(entity => entity.Item.Produto.Id))
+            .ForMember(dto => dto.Nome, m => m.MapFrom(entity => entity.Item.Produto.Nome))
             .ForMember(dto => dto.Imagem, m => m.MapFrom(entity => entity.Item.Produto.ImagemPrincipal.UrlImagem))
             .ForMember(dto => dto.Tamanho, m => m.MapFrom(entity => entity.Item.Tamanho.Nome))
             .ForMember(dto => dto.Cor, m => m.MapFrom(entity => entity.Item.Cor));
