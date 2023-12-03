@@ -36,7 +36,8 @@ public class EntityParaDto : Profile
             .ForMember(dto => dto.Imagens, m => m.MapFrom(entity => entity.ImagensOrdenadas));
 
         CreateMap<CarrinhoItem, CarrinhoDetalhesItemDto>()
-            .ForMember(dto => dto.Id, m => m.MapFrom(entity => entity.Item.Id))
+            .ForMember(dto => dto.IdProduto, m => m.MapFrom(entity => entity.Item.Produto.Id))
+            .ForMember(dto => dto.IdItem, m => m.MapFrom(entity => entity.Item.Id))
             .ForMember(dto => dto.Imagem, m => m.MapFrom(entity => entity.Item.Produto.ImagemPrincipal.UrlImagem))
             .ForMember(dto => dto.Nome, m => m.MapFrom(entity => entity.Item.Produto.Nome))
             .ForMember(dto => dto.Tamanho, m => m.MapFrom(entity => entity.Item.Tamanho.Nome))

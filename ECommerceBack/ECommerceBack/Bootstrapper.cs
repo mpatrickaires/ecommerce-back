@@ -10,6 +10,7 @@ using ECommerceBack.WebApi.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Npgsql;
 using System.Reflection;
 using System.Text;
 
@@ -64,7 +65,7 @@ public static class Bootstrapper
         ECommerceContextOptions contextOptions = builder.ObterOptions<ECommerceContextOptions>(ECommerceContextOptions.Position);
 
         builder.Services.AddDbContext<ECommerceDbContext>(options => options
-            .UseNpgsql(contextOptions.ConnectionString)
+            .UseNpgsql($"Host={contextOptions.Host};Database={contextOptions.Database};Username={contextOptions.Username};Password={contextOptions.Password}")
             .UseSnakeCaseNamingConvention());
 
         return builder;
@@ -115,7 +116,26 @@ public static class Bootstrapper
 
     private static IServiceProvider AplicarMigrations(this IServiceProvider serviceProvider)
     {
-        serviceProvider.GetRequiredService<ECommerceDbContext>().Database.Migrate();
+        int retries = 0;
+        void Migrate()
+        {
+            try
+            {
+                serviceProvider.GetRequiredService<ECommerceDbContext>().Database.Migrate();
+            }
+            catch (NpgsqlException e)
+            {
+                retries++;
+                if (retries == 4)
+                {
+                    throw;
+                }
+
+                Thread.Sleep(TimeSpan.FromSeconds(2));
+                Migrate();
+            }
+        }
+        Migrate();
 
         return serviceProvider;
     }

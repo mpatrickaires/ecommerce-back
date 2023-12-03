@@ -8,7 +8,8 @@ public class CarrinhoDetalhesDto
 
 public class CarrinhoDetalhesItemDto
 {
-    public int Id { get; set; }
+    public int IdProduto { get; set; }
+    public int IdItem { get; set; }
     public string Nome { get; set; }
     public string Imagem { get; set; }
     public string Tamanho { get; set; }
